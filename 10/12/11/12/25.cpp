@@ -1,39 +1,23 @@
+vector<pair<int, int>> ver(1e5+1), hor(1e5+1);
 class Solution {
 public:
-    int countCoveredBuildings(int n, vector<vector<int>>& buildings) {
-        unordered_map<int,vector<int>>rows;
-        unordered_map<int,vector<int>>cols;
-        for(auto it:buildings){
-            int x=it[0];
-            int y=it[1];
-            rows[x].push_back(y);
-            cols[y].push_back(x);
-            
+    int countCoveredBuildings(int n, vector<vector<int>> &nums){
+        for(int i=1;i<=n;i++){
+            ver[i]={n, 0};
+            hor[i]={n, 0};
         }
-        for(auto &it:rows){
-            sort(it.second.begin(),it.second.end());
+        int x, y, ans=0;
+        for(vector<int> &vec:nums){
+            x=vec[0]; y=vec[1];
+            ver[x].first =min(ver[x].first, y);
+            ver[x].second=max(ver[x].second, y);
+            hor[y].first =min(hor[y].first, x);
+            hor[y].second=max(hor[y].second, x);
         }
-        for(auto &it:cols){
-            sort(it.second.begin(),it.second.end());
+        for(vector<int> &vec:nums){
+            x=vec[0]; y=vec[1];
+            ans+=(ver[x].first<y && y<ver[x].second && hor[y].first<x && x<hor[y].second);
         }
-        int cnt=0;
-        for(auto it:buildings){
-            int x=it[0];
-            int y=it[1];
-            
-            auto it1=lower_bound(rows[x].begin(),rows[x].end(),y);
-            auto it2=upper_bound(rows[x].begin(),rows[x].end(),y);
-            if(it1==rows[x].begin() || it2==rows[x].end()){
-                continue;
-            }
-            auto it3=lower_bound(cols[y].begin(),cols[y].end(),x);
-            auto it4=upper_bound(cols[y].begin(),cols[y].end(),x);
-            if(it3==cols[y].begin() || it4==cols[y].end()){
-                continue;
-            }
-            cnt++;
-            
-        }
-        return cnt;
+        return ans;
     }
 };
